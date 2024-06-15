@@ -8,6 +8,7 @@
 int main()
 {
 	initAllegro();
+	initAssets();
 	while (1);
 	return 0;
 }

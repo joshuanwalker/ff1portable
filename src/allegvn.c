@@ -22,7 +22,6 @@ ALLEGRO_EVENT event;
 ALLEGRO_COLOR nesPallette[64];
 
 ALLEGRO_COLOR transparent;
-
 ALLEGRO_COLOR black;
 ALLEGRO_COLOR blueDark;
 ALLEGRO_COLOR greenDark;
@@ -236,9 +235,6 @@ void initAllegro(void)
 	al_use_transform(&trans);
 	al_set_target_backbuffer(display);
 	al_clear_to_color(black);
-
-
-
 }
 
 
@@ -259,7 +255,8 @@ void initColors(void)
 		nesPallette[colorIndex] = al_map_rgb(palRed, palGreen, palBlue);
 	}
 
-	transparent = al_map_rgba(0, 0, 0, 0);
+	nesPallette[0x0D] = al_map_rgba(0, 0, 0, 0); //Hijacking invalid color 0x0D for trasparent. 
+	transparent = nesPallette[0x0D];
 
 	black = nesPallette[0x0F];
 	blueDark = nesPallette[0x02];

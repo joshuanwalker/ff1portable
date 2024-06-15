@@ -240,16 +240,51 @@ ALLEGRO_BITMAP* tileBrush = NULL;
 
 
 
-uint8_t* get_nes_chr_tile(int romOffset, int tile_index, uint8_t tile_array[]) {
+//uint8_t* get_nes_chr_tile(int romOffset, int tile_index, uint8_t tile_array[]) {
+//
+//	// Calculate byte offset based on tile index
+//	int tileOffset = tile_index * 16;  // Each tile is 16 bytes (2 rows of 8 bytes)
+//
+//	// Loop through each row of the tile
+//	for (int y = 0; y < 8; y++) {
+//		// Extract low and high bits for the current row
+//		uint8_t low_byte =ROM[romOffset+(tileOffset + y)];
+//		uint8_t high_byte =ROM[romOffset + (tileOffset + y + 8)];
+//		printf("\n");
+//
+//		// Loop through each pixel in the row
+//		for (int x = 0; x < 8; x++) {
+//			// Combine low and high bits to get the pixel value (0 or 1)
+//			uint8_t pixel = (low_byte >> (7 - x)) & 1;
+//			pixel |= ((high_byte >> (7 - x)) & 1) << 1;
+//
+//			// Store the pixel value in the array
+//			tile_array[y * 8 + x] = pixel;
+//			printf("%d ", pixel);
+//		}
+//	}
+//	al_set_target_bitmap(tileBrush);
+//	al_clear_to_color(white);
+//	al_set_target_backbuffer(display);
+//	al_draw_bitmap(tileBrush, 25, 25, 0);
+//	al_flip_display();
+//	return tile_array;
+//}
+
+void get_nes_chr_tile(int romOffset, int tile_index, uint8_t color0, uint8_t color1, uint8_t color2, uint8_t color3)
+{
+	ALLEGRO_COLOR tilePalette[4] =
+	{nesPallette[color0],nesPallette[color1], nesPallette[color2], nesPallette[color3] };
+	al_set_target_bitmap(tileBrush);
+	al_clear_to_color(transparent);
 	// Calculate byte offset based on tile index
 	int tileOffset = tile_index * 16;  // Each tile is 16 bytes (2 rows of 8 bytes)
 
 	// Loop through each row of the tile
 	for (int y = 0; y < 8; y++) {
 		// Extract low and high bits for the current row
-		uint8_t low_byte =ROM[romOffset+(tileOffset + y)];
-		uint8_t high_byte =ROM[romOffset + (tileOffset + y + 8)];
-		printf("\n");
+		uint8_t low_byte = ROM[romOffset + (tileOffset + y)];
+		uint8_t high_byte = ROM[romOffset + (tileOffset + y + 8)];
 
 		// Loop through each pixel in the row
 		for (int x = 0; x < 8; x++) {
@@ -258,37 +293,37 @@ uint8_t* get_nes_chr_tile(int romOffset, int tile_index, uint8_t tile_array[]) {
 			pixel |= ((high_byte >> (7 - x)) & 1) << 1;
 
 			// Store the pixel value in the array
-			tile_array[y * 8 + x] = pixel;
-			printf("%d ", pixel);
+			al_put_pixel(x, y, tilePalette[pixel]);
 		}
 	}
-	al_set_target_bitmap(tileBrush);
-	al_clear_to_color(white);
-	al_set_target_backbuffer(display);
-	al_draw_bitmap(tileBrush, 25, 25, 0);
-	al_flip_display();
-	return tile_array;
 }
 
 
-
-
-void extractChrBlock(int offset)
+void extractFont(void)
 {
-	
-	uint8_t tileData[64];
-	get_nes_chr_tile(offset, 0,tileData);
-	printf("\n");
-	for (int y = 0; y < 8; y++) {
-		printf("\n");
+	int i=0;
+	int x=0;
+	int y=0;
+	uint8_t flipcolor = 0x0D;
+	ALLEGRO_BITMAP* fontCanvas = al_create_bitmap(128, 64);
+	al_set_target_bitmap(fontCanvas);
+	al_clear_to_color(transparent);
+	for (i = 0; i < 128; i++)
+	{
+		if (i > 118) { flipcolor = 0x01; }
+		get_nes_chr_tile(CHR_FONT, i, 0x0D, 0x00,flipcolor, 0x20);
+		al_set_target_bitmap(fontCanvas);
+		al_draw_bitmap(tileBrush, x, y, 0);
+		x=x+8;
+		if (x > 127) { x = 0; y = y + 8; }
 
-		// Loop through each pixel in the row
-		for (int x = 0; x < 8; x++) {
-			printf("%d ", tileData[y * 8 + x]);
-		}
 	}
-
+	al_set_path_filename(themePath, "font.png");
+	al_save_bitmap(al_path_cstr(themePath, ALLEGRO_NATIVE_PATH_SEP),fontCanvas);
 }
+
+
+
 
 
 bool LoadROM(void)
@@ -313,18 +348,23 @@ bool LoadROM(void)
 
 void romExtract(void)
 {
-	//////////////////////
-	//TEMP _ REMOVE WHEN DONE
-	/////////////////////
-	display = al_create_display(256, 240);
-	al_set_target_backbuffer(display);
-	al_clear_to_color(black);
-	//////////////////////
+	int error;
 
 	tileBrush = al_create_bitmap(8, 8);
 	printf("Extractnig ROM!\n");
 	LoadROM();
-	extractChrBlock(CHR_FONT);
+	printf("Themes located at %s\n", al_path_cstr(themePath, ALLEGRO_NATIVE_PATH_SEP));
+	//Make "original" theme folder if one doesn't exist
+	if (!al_filename_exists(al_path_cstr(themePath, ALLEGRO_NATIVE_PATH_SEP))) {
+		//printf("trying to make original theme folder\n");
+		if (!al_make_directory(al_path_cstr(themePath, ALLEGRO_NATIVE_PATH_SEP))) {
+			printf("trying to make original theme folder failed!\n");
+			error = al_get_errno();
+			printf("error was %d\n", error);
+			exit(error);
+		}
+	}
+	extractFont();
 	while (1);
 }
 

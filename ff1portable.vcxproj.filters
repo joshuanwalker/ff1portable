@@ -24,6 +24,9 @@
     <ClCompile Include="src\romtools.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\assets.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\allegvn.h">
@@ -42,6 +45,9 @@
       <Filter>Resource Files</Filter>
     </ClInclude>
     <ClInclude Include="src\externs.h">
+      <Filter>Resource Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\assets.h">
       <Filter>Resource Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -20,11 +20,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\allegvn.c" />
+    <ClCompile Include="src\assets.c" />
     <ClCompile Include="src\main.c" />
     <ClCompile Include="src\romtools.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\allegvn.h" />
+    <ClInclude Include="src\assets.h" />
     <ClInclude Include="src\defines.h" />
     <ClInclude Include="src\externs.h" />
     <ClInclude Include="src\includes.h" />

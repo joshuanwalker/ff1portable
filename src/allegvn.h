@@ -15,8 +15,8 @@ extern ALLEGRO_PATH* themePath;
 
 extern ALLEGRO_COLOR nesPallette[64];
 
-extern ALLEGRO_COLOR transparent;
 
+extern ALLEGRO_COLOR transparent;
 extern ALLEGRO_COLOR black;
 extern ALLEGRO_COLOR blueDark;
 extern ALLEGRO_COLOR greenDark;

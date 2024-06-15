@@ -9,6 +9,7 @@
 #include "defines.h"
 #include "allegvn.h"
 #include "romtools.h"
+#include "assets.h"
 
 
 #endif /* INCLUDES_H */
